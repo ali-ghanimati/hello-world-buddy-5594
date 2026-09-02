@@ -31,8 +31,8 @@ export const inputClass =
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  error?: string;
-  hint?: string;
+  error?: string | undefined;
+  hint?: string | undefined;
 }
 
 export function TextField({ label, error, hint, className, ...props }: TextFieldProps) {
