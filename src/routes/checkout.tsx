@@ -88,6 +88,7 @@ function CheckoutPage() {
   if (lines.length === 0) {
     return (
       <div className="container-shiko py-16">
+        <h1 className="mb-6 text-2xl font-black">تکمیل سفارش</h1>
         <EmptyState
           icon={ShoppingBag}
           title="سبدی برای پرداخت وجود ندارد"

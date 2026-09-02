@@ -49,6 +49,7 @@ function AccountPage() {
   if (!user) {
     return (
       <div className="container-shiko py-16">
+        <h1 className="mb-6 text-2xl font-black">حساب کاربری</h1>
         <EmptyState
           icon={UserRound}
           title="هنوز وارد نشده‌اید"
