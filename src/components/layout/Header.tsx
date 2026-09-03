@@ -122,7 +122,7 @@ export function Header() {
             className="absolute inset-0 bg-foreground/40"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="absolute inset-y-0 right-0 w-[80%] max-w-xs bg-card p-5">
+          <div className="absolute inset-y-0 right-0 w-[80%] max-w-xs bg-background p-5 shadow-2xl">
             <div className="flex items-center justify-between">
               <span className="text-lg font-black tracking-[0.3em]">SHIKO</span>
               <button
