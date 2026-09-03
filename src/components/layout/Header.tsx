@@ -115,9 +115,11 @@ export function Header() {
           </form>
         )}
       </div>
+    </header>
 
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
+
           <button
             type="button"
             aria-label="بستن منو"
