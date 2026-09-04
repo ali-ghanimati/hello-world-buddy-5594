@@ -28,6 +28,26 @@ export interface ProductAttributeOption {
   hex?: string;
 }
 
+export interface ProductVariation {
+  id: number;
+  sku: string;
+
+  price: number;
+  regularPrice: number;
+  salePrice: number | null;
+  onSale: boolean;
+
+  attributes: {
+    size?: ProductAttributeOption;
+    color?: ProductAttributeOption;
+  };
+
+  stockStatus: StockStatus;
+  stockQuantity: number | null;
+
+  image?: ProductImage;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -50,6 +70,7 @@ export interface Product {
   featured: boolean;
   isNew: boolean;
   totalSales: number;
+  variations: ProductVariation[];
 }
 
 export interface ProductQuery {
@@ -72,6 +93,7 @@ export interface CartLine {
   size: string;
   color: string;
   quantity: number;
+  variationId: number;
 }
 
 export interface OrderSummaryTotals {
