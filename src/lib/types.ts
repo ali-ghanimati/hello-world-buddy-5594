@@ -1,9 +1,19 @@
 /**
- * Domain models — intentionally shaped after WooCommerce REST resources so the
- * mock data layer can later be swapped for a real WP/Woo API without touching UI.
+ * Domain models for SHIKO.
+ *
+ * These models intentionally resemble the data we need from
+ * WooCommerce, while remaining independent from the raw
+ * WooCommerce REST API response shape.
+ *
+ * The Service Layer will later map WooCommerce responses
+ * into these domain models.
  */
 
-export type CategorySlug = "tshirt" | "shirt" | "pants" | "shoes";
+export type CategorySlug =
+  | "tshirt"
+  | "shirt"
+  | "pants"
+  | "shoes";
 
 export interface Category {
   id: number;
@@ -24,7 +34,8 @@ export interface ProductImage {
 export interface ProductAttributeOption {
   value: string;
   label: string;
-  /** optional CSS color for swatches */
+
+  /** Optional CSS color used by color swatches. */
   hex?: string;
 }
 
@@ -53,23 +64,32 @@ export interface Product {
   name: string;
   slug: string;
   sku: string;
+
   description: string;
   shortDescription: string;
-  /** effective price (Toman) */
+
+  /** Effective selling price in Toman. */
   price: number;
+
   regularPrice: number;
   salePrice: number | null;
   onSale: boolean;
+
   categorySlug: CategorySlug;
   categoryName: string;
+
   images: ProductImage[];
+
   sizes: ProductAttributeOption[];
   colors: ProductAttributeOption[];
+
   stockStatus: StockStatus;
   stockQuantity: number;
+
   featured: boolean;
   isNew: boolean;
   totalSales: number;
+
   variations: ProductVariation[];
 }
 
@@ -81,19 +101,28 @@ export interface ProductQuery {
   orderBy?: SortKey;
 }
 
-export type SortKey = "newest" | "popular" | "price-asc" | "price-desc";
+export type SortKey =
+  | "newest"
+  | "popular"
+  | "price-asc"
+  | "price-desc";
 
 export interface CartLine {
   key: string;
+
   productId: number;
+  variationId: number;
+
   slug: string;
   name: string;
   image: string;
+
   price: number;
+
   size: string;
   color: string;
+
   quantity: number;
-  variationId: number;
 }
 
 export interface OrderSummaryTotals {
@@ -103,13 +132,43 @@ export interface OrderSummaryTotals {
   total: number;
 }
 
-export type OrderStatus = "processing" | "shipped" | "completed" | "cancelled";
+export type OrderStatus =
+  | "processing"
+  | "shipped"
+  | "completed"
+  | "cancelled";
+
+export interface OrderItem {
+  productId: number;
+  variationId: number;
+
+  name: string;
+  sku: string;
+
+  size: string;
+  color: string;
+
+  quantity: number;
+  price: number;
+}
+
+export interface OrderAddress {
+  fullName: string;
+  phone: string;
+  city: string;
+  address: string;
+  postalCode: string;
+}
 
 export interface Order {
   id: string;
+
   date: string;
   status: OrderStatus;
-  items: { name: string; size: string; color: string; quantity: number; price: number }[];
-  total: number;
-  address: string;
+
+  items: OrderItem[];
+
+  totals: OrderSummaryTotals;
+
+  address: OrderAddress;
 }
