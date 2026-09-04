@@ -1,13 +1,14 @@
-```tsx
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
+
 import { useCart } from "@/store/cart";
 import { formatToman, toPersianDigits } from "@/lib/format";
 import { Breadcrumbs } from "@/components/base/Breadcrumbs";
 import { Button } from "@/components/base/Button";
 import { TextField } from "@/components/base/Input";
 import { EmptyState } from "@/components/base/EmptyState";
+import { createOrder } from "@/services/orders";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -54,37 +55,6 @@ interface FormState {
   postalCode: string;
 }
 
-interface CheckoutOrderItem {
-  productId: number;
-  variationId: number;
-  name: string;
-  sku: string;
-  quantity: number;
-  price: number;
-  size: string;
-  color: string;
-}
-
-interface CheckoutOrderPayload {
-  customer: {
-    fullName: string;
-    phone: string;
-    city: string;
-    address: string;
-    postalCode: string;
-  };
-
-  paymentMethod: "online" | "cod";
-
-  items: CheckoutOrderItem[];
-
-  totals: {
-    subtotal: number;
-    shipping: number;
-    total: number;
-  };
-}
-
 const EMPTY: FormState = {
   fullName: "",
   phone: "",
@@ -96,8 +66,7 @@ const EMPTY: FormState = {
 function CheckoutPage() {
   const { lines, totals, clear } = useCart();
 
-  const [form, setForm] =
-    useState<FormState>(EMPTY);
+  const [form, setForm] = useState<FormState>(EMPTY);
 
   const [errors, setErrors] =
     useState<Partial<FormState>>({});
@@ -154,37 +123,36 @@ function CheckoutPage() {
     return Object.keys(next).length === 0;
   };
 
-  const buildOrderPayload =
-    (): CheckoutOrderPayload => {
-      return {
-        customer: {
-          fullName: form.fullName.trim(),
-          phone: form.phone.trim(),
-          city: form.city.trim(),
-          address: form.address.trim(),
-          postalCode: form.postalCode.trim(),
-        },
+  const buildOrderPayload = () => {
+    return {
+      customer: {
+        fullName: form.fullName.trim(),
+        phone: form.phone.trim(),
+        city: form.city.trim(),
+        address: form.address.trim(),
+        postalCode: form.postalCode.trim(),
+      },
 
-        paymentMethod: payment,
+      paymentMethod: payment,
 
-        items: lines.map((line) => ({
-          productId: line.productId,
-          variationId: line.variationId,
-          name: line.name,
-          sku: line.sku,
-          quantity: line.quantity,
-          price: line.price,
-          size: line.size,
-          color: line.color,
-        })),
+      items: lines.map((line) => ({
+        productId: line.productId,
+        variationId: line.variationId,
+        name: line.name,
+        sku: line.sku,
+        quantity: line.quantity,
+        price: line.price,
+        size: line.size,
+        color: line.color,
+      })),
 
-        totals: {
-          subtotal: totals.subtotal,
-          shipping: totals.shipping,
-          total: totals.total,
-        },
-      };
+      totals: {
+        subtotal: totals.subtotal,
+        shipping: totals.shipping,
+        total: totals.total,
+      },
     };
+  };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -205,51 +173,35 @@ function CheckoutPage() {
     setSubmitting(true);
 
     try {
+      const orderPayload =
+        buildOrderPayload();
+
       /*
-       * ساختار سفارش نهایی.
+       * ایجاد سفارش از طریق Service Layer
        *
-       * این Payload در مرحله بعد مستقیماً
-       * به Server/API Layer منتقل خواهد شد.
+       * مسیر فعلی:
+       *
+       * Checkout
+       *   ↓
+       * createOrder()
+       *   ↓
+       * Mock
        *
        * مسیر نهایی:
        *
        * Checkout
        *   ↓
+       * createOrder()
+       *   ↓
        * Server API
        *   ↓
        * WooCommerce
        */
-      const orderPayload =
-        buildOrderPayload();
 
-      /*
-       * فعلاً Mock
-       *
-       * در مرحله اتصال WooCommerce این قسمت
-       * با چیزی شبیه این جایگزین می‌شود:
-       *
-       * await createWooCommerceOrder(orderPayload)
-       *
-       * توجه:
-       * اطلاعات حساس WooCommerce نباید
-       * در Browser قرار بگیرد.
-       */
+      const result =
+        await createOrder(orderPayload);
 
-      console.log(
-        "SHIKO Checkout Order:",
-        orderPayload,
-      );
-
-      await new Promise((resolve) =>
-        window.setTimeout(resolve, 700),
-      );
-
-      const generatedOrderId =
-        `SHK-${Math.floor(
-          100000 + Math.random() * 899999,
-        )}`;
-
-      setOrderId(generatedOrderId);
+      setOrderId(result.order.id);
 
       clear();
     } catch {
@@ -590,13 +542,4 @@ function CheckoutPage() {
             className="mt-6 w-full"
             disabled={submitting}
           >
-            {submitting
-              ? "در حال ثبت سفارش..."
-              : "ثبت سفارش"}
-          </Button>
-        </aside>
-      </form>
-    </div>
-  );
-}
-```
+            {
