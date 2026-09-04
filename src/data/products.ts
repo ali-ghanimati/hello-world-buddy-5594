@@ -1,4 +1,9 @@
-import type { Category, Product } from "@/lib/types";
+import type {
+  Category,
+  Product,
+  ProductAttributeOption,
+  ProductVariation,
+} from "@/lib/types";
 
 import tshirtImg from "@/assets/cat-tshirt.jpg";
 import shirtImg from "@/assets/cat-shirt.jpg";
@@ -7,40 +12,49 @@ import shoesImg from "@/assets/cat-shoes.jpg";
 import lookbookImg from "@/assets/lookbook.jpg";
 import editorialImg from "@/assets/editorial.jpg";
 
-export const categoryImages = { tshirt: tshirtImg, shirt: shirtImg, pants: pantsImg, shoes: shoesImg };
+export const categoryImages = {
+  tshirt: tshirtImg,
+  shirt: shirtImg,
+  pants: pantsImg,
+  shoes: shoesImg,
+};
 
 export const categories: Category[] = [
   {
     id: 11,
     slug: "tshirt",
     name: "تیشرت",
-    description: "تیشرت‌های پنبه‌ای با دوخت تمیز و فرم ماندگار برای پوشش روزمره.",
+    description:
+      "تیشرت‌های پنبه‌ای با دوخت تمیز و فرم ماندگار برای پوشش روزمره.",
     image: tshirtImg,
   },
   {
     id: 12,
     slug: "shirt",
     name: "پیراهن",
-    description: "پیراهن‌های آستین بلند از پارچه‌های نفس‌گیر، مناسب کار و مهمانی.",
+    description:
+      "پیراهن‌های آستین بلند از پارچه‌های نفس‌گیر، مناسب کار و مهمانی.",
     image: shirtImg,
   },
   {
     id: 13,
     slug: "pants",
     name: "شلوار",
-    description: "شلوارهای پارچه‌ای و کتان با فرم استاندارد و رنگ‌بندی خنثی.",
+    description:
+      "شلوارهای پارچه‌ای و کتان با فرم استاندارد و رنگ‌بندی خنثی.",
     image: pantsImg,
   },
   {
     id: 14,
     slug: "shoes",
     name: "کفش",
-    description: "کفش‌های چرم دست‌دوز با زیره راحت برای استفاده طولانی.",
+    description:
+      "کفش‌های چرم دست‌دوز با زیره راحت برای استفاده طولانی.",
     image: shoesImg,
   },
 ];
 
-const SIZES_CLOTHES = [
+const SIZES_CLOTHES: ProductAttributeOption[] = [
   { value: "s", label: "S" },
   { value: "m", label: "M" },
   { value: "l", label: "L" },
@@ -48,19 +62,74 @@ const SIZES_CLOTHES = [
   { value: "xxl", label: "۲XL" },
 ];
 
-const SIZES_PANTS = ["۳۰", "۳۲", "۳۴", "۳۶", "۳۸"].map((l, i) => ({ value: `p${i}`, label: l }));
-const SIZES_SHOES = ["۴۰", "۴۱", "۴۲", "۴۳", "۴۴"].map((l, i) => ({ value: `sh${i}`, label: l }));
+const SIZES_PANTS: ProductAttributeOption[] = [
+  "۳۰",
+  "۳۲",
+  "۳۴",
+  "۳۶",
+  "۳۸",
+].map((label, index) => ({
+  value: `p${index}`,
+  label,
+}));
+
+const SIZES_SHOES: ProductAttributeOption[] = [
+  "۴۰",
+  "۴۱",
+  "۴۲",
+  "۴۳",
+  "۴۴",
+].map((label, index) => ({
+  value: `sh${index}`,
+  label,
+}));
 
 const C = {
-  cream: { value: "cream", label: "کرم", hex: "#EDE6D8" },
-  white: { value: "white", label: "سفید", hex: "#F7F5F1" },
-  navy: { value: "navy", label: "سرمه‌ای", hex: "#28344A" },
-  charcoal: { value: "charcoal", label: "زغالی", hex: "#33322F" },
-  olive: { value: "olive", label: "زیتونی", hex: "#5A6247" },
-  camel: { value: "camel", label: "شتری", hex: "#B08A5F" },
-  brown: { value: "brown", label: "قهوه‌ای", hex: "#6B452C" },
-  stone: { value: "stone", label: "سنگی", hex: "#C7BDAE" },
-  sky: { value: "sky", label: "آبی روشن", hex: "#AFC4DA" },
+  cream: {
+    value: "cream",
+    label: "کرم",
+    hex: "#EDE6D8",
+  },
+  white: {
+    value: "white",
+    label: "سفید",
+    hex: "#F7F5F1",
+  },
+  navy: {
+    value: "navy",
+    label: "سرمه‌ای",
+    hex: "#28344A",
+  },
+  charcoal: {
+    value: "charcoal",
+    label: "زغالی",
+    hex: "#33322F",
+  },
+  olive: {
+    value: "olive",
+    label: "زیتونی",
+    hex: "#5A6247",
+  },
+  camel: {
+    value: "camel",
+    label: "شتری",
+    hex: "#B08A5F",
+  },
+  brown: {
+    value: "brown",
+    label: "قهوه‌ای",
+    hex: "#6B452C",
+  },
+  stone: {
+    value: "stone",
+    label: "سنگی",
+    hex: "#C7BDAE",
+  },
+  sky: {
+    value: "sky",
+    label: "آبی روشن",
+    hex: "#AFC4DA",
+  },
 };
 
 type Seed = {
@@ -297,36 +366,153 @@ const seeds: Seed[] = [
   },
 ];
 
-const galleryFor = (main: string) => [main, lookbookImg, editorialImg];
+const galleryFor = (main: string) => [
+  main,
+  lookbookImg,
+  editorialImg,
+];
+
+const createMockVariations = (
+  productId: number,
+  sku: string,
+  sizes: ProductAttributeOption[],
+  colors: ProductAttributeOption[],
+  price: number,
+  regularPrice: number,
+  salePrice: number | null,
+  stockQuantity: number,
+  image: string,
+): ProductVariation[] => {
+  const combinations = sizes.flatMap((size) =>
+    colors.map((color) => ({
+      size,
+      color,
+    })),
+  );
+
+  if (combinations.length === 0) {
+    return [];
+  }
+
+  const stockPerVariation =
+    stockQuantity > 0
+      ? Math.max(
+          1,
+          Math.floor(stockQuantity / combinations.length),
+        )
+      : 0;
+
+  return combinations.map(({ size, color }, index) => ({
+    id: productId * 100 + index + 1,
+
+    sku: `${sku}-${size.value}-${color.value}`,
+
+    price,
+    regularPrice,
+    salePrice,
+    onSale: salePrice !== null,
+
+    attributes: {
+      size,
+      color,
+    },
+
+    stockStatus:
+      stockPerVariation > 0 ? "instock" : "outofstock",
+
+    stockQuantity: stockPerVariation,
+
+    image: {
+      id: index,
+      src: image,
+      alt: `${sku} - ${color.label} - ${size.label}`,
+    },
+  }));
+};
 
 export const products: Product[] = seeds.map((s, index) => {
-  const category = categories.find((c) => c.slug === s.cat)!;
-  const sizes = s.cat === "shoes" ? SIZES_SHOES : s.cat === "pants" ? SIZES_PANTS : SIZES_CLOTHES;
-  const stockQuantity = s.stock ?? 6 + (index % 9);
+  const category = categories.find(
+    (c) => c.slug === s.cat,
+  )!;
+
+  const sizes =
+    s.cat === "shoes"
+      ? SIZES_SHOES
+      : s.cat === "pants"
+        ? SIZES_PANTS
+        : SIZES_CLOTHES;
+
+  const stockQuantity =
+    s.stock ?? 6 + (index % 9);
+
+  const productId = 1000 + index;
+
+  const sku = `SHK-${category.slug
+    .toUpperCase()
+    .slice(0, 3)}-${productId}`;
+
+  const price = s.sale ?? s.price;
+  const regularPrice = s.price;
+  const salePrice = s.sale ?? null;
+
   return {
-    id: 1000 + index,
+    id: productId,
+
     name: s.name,
+
     slug: s.slug,
-    sku: `SHK-${category.slug.toUpperCase().slice(0, 3)}-${1000 + index}`,
+
+    sku,
+
     description: s.desc,
+
     shortDescription: s.short,
-    price: s.sale ?? s.price,
-    regularPrice: s.price,
-    salePrice: s.sale ?? null,
+
+    price,
+
+    regularPrice,
+
+    salePrice,
+
     onSale: Boolean(s.sale),
+
     categorySlug: category.slug,
+
     categoryName: category.name,
+
     images: galleryFor(s.image).map((src, i) => ({
       id: i,
       src,
       alt: `${s.name} — نمای ${i + 1}`,
     })),
+
     sizes,
+
     colors: s.colors,
-    stockStatus: stockQuantity > 0 ? "instock" : "outofstock",
+
+    variations: createMockVariations(
+      productId,
+      sku,
+      sizes,
+      s.colors,
+      price,
+      regularPrice,
+      salePrice,
+      stockQuantity,
+      s.image,
+    ),
+
+    stockStatus:
+      stockQuantity > 0
+        ? "instock"
+        : "outofstock",
+
     stockQuantity,
+
     featured: Boolean(s.featured),
+
     isNew: Boolean(s.isNew),
+
     totalSales: s.sales,
   };
 });
