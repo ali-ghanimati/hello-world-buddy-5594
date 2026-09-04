@@ -112,15 +112,16 @@ const MOCK_ORDERS: Order[] = [
  * WooCommerce REST API
  */
 export async function getOrders(): Promise<Order[]> {
-  return MOCK_ORDERS;
+  return [...MOCK_ORDERS];
 }
 
 /**
  * Create a new order.
  *
- * Currently this only creates a local mock order.
+ * Currently this creates a local mock order
+ * and adds it to the in-memory order history.
  *
- * Later this function will call our server/API layer:
+ * Later:
  *
  * Frontend
  *   ↓
@@ -135,6 +136,7 @@ export async function createOrder(
 
   const order: Order = {
     id: `SHK-${orderNumber}`,
+
     date: new Intl.DateTimeFormat("fa-IR", {
       year: "numeric",
       month: "long",
@@ -155,6 +157,9 @@ export async function createOrder(
 
     address: `${input.customer.city}، ${input.customer.address}`,
   };
+
+  // Add the newest order to the beginning of the mock order list.
+  MOCK_ORDERS.unshift(order);
 
   return {
     order,
